@@ -3,7 +3,7 @@
 	url = https://github.com/free5gc/webconsole.git
 [submodule "src/amf"]
 	path = src/amf
-	url = https://github.com/free5gc/amf.git
+	url = https://github.com/blaxmirror/amf.git
 [submodule "src/ausf"]
 	path = src/ausf
 	url = https://github.com/free5gc/ausf.git
