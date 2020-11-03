@@ -148,27 +148,28 @@ func (etaf *ETAF) Start() {
 	} else {
 		profile = profileTmp
 	}
-   logger.CommLog.Info("xxxxxxxxxxx etaf 0 xxxxxxxxxxxxxxxx")
+
+    logger.CommLog.Info("Register ETAF to NRF start")
+
 	if _, nfId, err := consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile); err != nil {
-		logger.CommLog.Info("xxxxxxxxxxx etaf regiter if xxxxxxxxxxxxxxxx")
 		initLog.Warnf("Send Register NF Instance failed: %+v", err)
 
 	} else {
-		   logger.CommLog.Info("xxxxxxxxxxx etaf regiter else xxxxxxxxxxxxxxxx")
+		logger.CommLog.Info("Register ETAF to NRF success")
 		self.NfId = nfId
 	}
 
 	server, err := http2_util.NewServer(addr, util.EtafLogPath, router)
-   logger.CommLog.Info("xxxxxxxxxxx etaf 1 xxxxxxxxxxxxxxxx")
+
+    logger.CommLog.Info("Send ETAF Location Info Subscribe towards AMF start")
 	// subscribe to all Amfs' status change
 	amfInfos := consumer.SearchAvailableAMFs(self.NrfUri, models.ServiceName_NAMF_COMM)
 	for _, amfInfo := range amfInfos {
 		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
 		if len(guamiList) == 0 {
-			logger.CommLog.Info("xxxxxxxxxxx etaf continue xxxxxxxxxxxxxxxx")
 			continue
 		}
-		logger.CommLog.Info("xxxxxxxxxxx etaf 2 xxxxxxxxxxxxxxxx")
+
 		var problemDetails *models.ProblemDetails
 		problemDetails, err = consumer.AmfStatusChangeSubscribe(amfInfo)
 		if problemDetails != nil {
@@ -177,6 +178,7 @@ func (etaf *ETAF) Start() {
 			logger.InitLog.Warnf("AMF status subscribe Error[%+v]", err)
 		}
 	}
+    logger.CommLog.Info("ETAF Location Info Subscribe success")
 
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
