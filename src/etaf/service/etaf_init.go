@@ -184,6 +184,22 @@ func (etaf *ETAF) Start() {
 	if err != nil {
 		initLog.Fatalf("HTTP server setup failed: %+v", err)
 	}
+
+	// subscribe to all Amfs' status change
+	amfInfos := consumer.SearchAvailableAMFs(self.NrfUri, models.ServiceName_NAMF_COMM)
+	for _, amfInfo := range amfInfos {
+		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
+		if len(guamiList) == 0 {
+			continue
+		}
+		var problemDetails *models.ProblemDetails
+		problemDetails, err = consumer.AmfStatusChangeSubscribe(amfInfo)
+		if problemDetails != nil {
+			logger.InitLog.Warnf("AMF status subscribe Failed[%+v]", problemDetails)
+		} else if err != nil {
+			logger.InitLog.Warnf("AMF status subscribe Error[%+v]", err)
+		}
+	}
 }
 
 func (etaf *ETAF) Exec(c *cli.Context) error {

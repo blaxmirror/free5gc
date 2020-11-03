@@ -100,3 +100,27 @@ func SearchAmfCommunicationInstance(ue *etaf_context.EtafUe, nrfUri string, targ
 	return nil
 
 }
+
+func SearchAvailableAMFs(nrfUri string, serviceName models.ServiceName) (
+	amfInfos []etaf_context.AMFStatusSubscriptionData) {
+	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
+
+	result, err := SendSearchNFInstances(nrfUri, models.NfType_AMF, models.NfType_ETAF, &localVarOptionals)
+	if err != nil {
+		logger.ConsumerLog.Errorf(err.Error())
+		return
+	}
+
+	for _, profile := range result.NfInstances {
+		uri := util.SearchNFServiceUri(profile, serviceName, models.NfServiceStatus_REGISTERED)
+		if uri != "" {
+			item := etaf_context.AMFStatusSubscriptionData{
+				AmfUri:    uri,
+				GuamiList: *profile.AmfInfo.GuamiList,
+			}
+			amfInfos = append(amfInfos, item)
+		}
+	}
+	return
+}
+

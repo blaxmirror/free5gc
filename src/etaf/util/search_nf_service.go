@@ -3,6 +3,8 @@ package util
 import (
 	"fmt"
 	"free5gc/lib/openapi/models"
+	"free5gc/src/etaf/context"
+	"reflect"
 )
 
 func SearchNFServiceUri(nfProfile models.NfProfile, serviceName models.ServiceName,
@@ -45,4 +47,25 @@ func getSbiUri(scheme models.UriScheme, ipv4Address string, port int32) (uri str
 		}
 	}
 	return
+}
+
+func GetNotSubscribedGuamis(guamisIn []models.Guami) (guamisOut []models.Guami) {
+	for _, guami := range guamisIn {
+		if !guamiInSubscriptionData(guami) {
+			guamisOut = append(guamisOut, guami)
+		}
+	}
+	return
+}
+
+func guamiInSubscriptionData(guami models.Guami) bool {
+	etafSelf := context.ETAF_Self()
+	for _, subscriptionData := range etafSelf.AMFStatusSubsData {
+		for _, sGuami := range subscriptionData.GuamiList {
+			if reflect.DeepEqual(sGuami, guami) {
+				return true
+			}
+		}
+	}
+	return false
 }

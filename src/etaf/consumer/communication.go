@@ -3,6 +3,12 @@ package consumer
 import (
 	"free5gc/lib/openapi/models"
 	etaf_context "free5gc/src/etaf/context"
+	"context"
+	"fmt"
+	"free5gc/lib/openapi"
+	"free5gc/src/pcf/logger"
+	"free5gc/src/pcf/util"
+	"strings"
 )
 
 func BuildUeContextCreateData(ue *etaf_context.EtafUe, targetRanId models.NgRanTargetId,
@@ -100,4 +106,41 @@ func buildAmPolicyReqTriggers(triggers []models.RequestTrigger) (amPolicyReqTrig
 		}
 	}
 	return
+}
+
+func AmfStatusChangeSubscribe(amfInfo etaf_context.AMFStatusSubscriptionData) (
+	problemDetails *models.ProblemDetails, err error) {
+	logger.Consumerlog.Debugf("PCF Subscribe to AMF status[%+v]", amfInfo.AmfUri)
+	etafSelf := etaf_context.ETAF_Self()
+	client := util.GetNamfClient(amfInfo.AmfUri)
+
+	subscriptionData := models.SubscriptionData{
+		AmfStatusUri: fmt.Sprintf("%s/netaf-callback/v1/amfstatus", etafSelf.GetIPv4Uri()),
+		GuamiList:    amfInfo.GuamiList,
+	}
+
+	res, httpResp, localErr :=
+		client.SubscriptionsCollectionDocumentApi.AMFStatusChangeSubscribe(context.Background(), subscriptionData)
+	if localErr == nil {
+		locationHeader := httpResp.Header.Get("Location")
+		logger.Consumerlog.Debugf("location header: %+v", locationHeader)
+
+		subscriptionId := locationHeader[strings.LastIndex(locationHeader, "/")+1:]
+		amfStatusSubsData := etaf_context.AMFStatusSubscriptionData{
+			AmfUri:       amfInfo.AmfUri,
+			AmfStatusUri: res.AmfStatusUri,
+			GuamiList:    res.GuamiList,
+		}
+		etafSelf.AMFStatusSubsData[subscriptionId] = amfStatusSubsData
+	} else if httpResp != nil {
+		if httpResp.Status != localErr.Error() {
+			err = localErr
+			return
+		}
+		problem := localErr.(openapi.GenericOpenAPIError).Model().(models.ProblemDetails)
+		problemDetails = &problem
+	} else {
+		err = openapi.ReportError("%s: server no response", amfInfo.AmfUri)
+	}
+	return problemDetails, err
 }

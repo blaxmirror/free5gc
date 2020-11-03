@@ -31,6 +31,7 @@ func init() {
 	tmsiGenerator = idgenerator.NewGenerator(1, math.MaxInt32)
 	etafStatusSubscriptionIDGenerator = idgenerator.NewGenerator(1, math.MaxInt32)
 	etafUeNGAPIDGenerator = idgenerator.NewGenerator(1, MaxValueOfEtafUeNgapId)
+	ETAF_Self().AMFStatusSubsData = make(map[string]AMFStatusSubscriptionData)
 }
 
 type ETAFContext struct {
@@ -62,6 +63,7 @@ type ETAFContext struct {
 	T3502Value                      int      // unit is second
 	T3512Value                      int      // unit is second
 	Non3gppDeregistrationTimerValue int      // unit is second
+	AMFStatusSubsData map[string]AMFStatusSubscriptionData // subscriptionId as key
 }
 
 // type ETAFContextEventSubscription struct {
@@ -87,6 +89,12 @@ type SecurityAlgorithm struct {
 	CipheringOrder []uint8 // slice of security.AlgCipheringXXX
 }
 
+
+type AMFStatusSubscriptionData struct {
+	AmfUri       string
+	AmfStatusUri string
+	GuamiList    []models.Guami
+}
 func NewPlmnSupportItem() (item PlmnSupportItem) {
 	item.SNssaiList = make([]models.Snssai, 0, MaxNumOfSlice)
 	return
