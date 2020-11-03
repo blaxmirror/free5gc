@@ -109,7 +109,9 @@ func (etaf *ETAF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (etaf *ETAF) Start() {
+
 	MongoDBLibrary.SetMongoDB(factory.EtafConfig.Configuration.MongoDBName, factory.EtafConfig.Configuration.MongoDBUrl)
+
 	initLog.Infoln("Server started")
 
 	router := logger_util.NewGinWithLogrus(logger.GinLog)

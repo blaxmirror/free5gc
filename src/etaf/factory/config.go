@@ -22,6 +22,11 @@ type Info struct {
 }
 
 type Configuration struct {
+
+	MongoDBName string `yaml:"MongoDBName"`
+
+	MongoDBUrl string `yaml:"MongoDBUrl"`
+
 	EtafName string `yaml:"etafName,omitempty"`
 
 	NgapIpList []string `yaml:"ngapIpList,omitempty"`
