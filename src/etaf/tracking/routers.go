@@ -13,7 +13,6 @@ import (
 	"free5gc/lib/logger_util"
 	"free5gc/src/etaf/logger"
 	"net/http"
-
 	"github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"

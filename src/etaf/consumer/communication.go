@@ -115,7 +115,7 @@ func AmfStatusChangeSubscribe(amfInfo etaf_context.AMFStatusSubscriptionData) (
 	client := util.GetNamfClient(amfInfo.AmfUri)
 
 	subscriptionData := models.SubscriptionData{
-		AmfStatusUri: fmt.Sprintf("%s/netaf-callback/v1/amfstatus", etafSelf.GetIPv4Uri()),
+		AmfStatusUri: fmt.Sprintf("%s/netaf-callback/v1/locInfoNotify", etafSelf.GetIPv4Uri()),
 		GuamiList:    amfInfo.GuamiList,
 	}
 

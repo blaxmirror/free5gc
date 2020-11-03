@@ -4,7 +4,7 @@ import (
 	"free5gc/lib/logger_util"
 	"free5gc/src/etaf/logger"
 	"net/http"
-
+    "strings"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
@@ -69,5 +69,12 @@ var routes = Routes{
 		"GET",
 		"/",
 		Index,
+	},
+
+	{
+		"HTTPLocInfoNotify",
+		strings.ToUpper("Post"),
+		"/locInfoNotify",
+		HTTPLocInfoNotify,
 	},
 }
