@@ -94,11 +94,6 @@ type N3IWF struct {
 	ReportCaller bool   `yaml:"ReportCaller"`
 }
 
-type ETAF struct {
-	DebugLevel   string `yaml:"debugLevel"`
-	ReportCaller bool   `yaml:"ReportCaller"`
-}
-
 type NAS struct {
 	DebugLevel   string `yaml:"debugLevel"`
 	ReportCaller bool   `yaml:"ReportCaller"`
@@ -150,11 +145,6 @@ type CommonConsumerTest struct {
 }
 
 type WEBUI struct {
-	DebugLevel   string `yaml:"debugLevel"`
-	ReportCaller bool   `yaml:"ReportCaller"`
-}
-
-type ETAF struct {
 	DebugLevel   string `yaml:"debugLevel"`
 	ReportCaller bool   `yaml:"ReportCaller"`
 }
