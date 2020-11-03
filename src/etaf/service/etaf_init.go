@@ -148,11 +148,34 @@ func (etaf *ETAF) Start() {
 	} else {
 		profile = profileTmp
 	}
-
+   logger.CommLog.Info("xxxxxxxxxxx etaf 0 xxxxxxxxxxxxxxxx")
 	if _, nfId, err := consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile); err != nil {
+		logger.CommLog.Info("xxxxxxxxxxx etaf regiter if xxxxxxxxxxxxxxxx")
 		initLog.Warnf("Send Register NF Instance failed: %+v", err)
+
 	} else {
+		   logger.CommLog.Info("xxxxxxxxxxx etaf regiter else xxxxxxxxxxxxxxxx")
 		self.NfId = nfId
+	}
+
+	server, err := http2_util.NewServer(addr, util.EtafLogPath, router)
+   logger.CommLog.Info("xxxxxxxxxxx etaf 1 xxxxxxxxxxxxxxxx")
+	// subscribe to all Amfs' status change
+	amfInfos := consumer.SearchAvailableAMFs(self.NrfUri, models.ServiceName_NAMF_COMM)
+	for _, amfInfo := range amfInfos {
+		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
+		if len(guamiList) == 0 {
+			logger.CommLog.Info("xxxxxxxxxxx etaf continue xxxxxxxxxxxxxxxx")
+			continue
+		}
+		logger.CommLog.Info("xxxxxxxxxxx etaf 2 xxxxxxxxxxxxxxxx")
+		var problemDetails *models.ProblemDetails
+		problemDetails, err = consumer.AmfStatusChangeSubscribe(amfInfo)
+		if problemDetails != nil {
+			logger.InitLog.Warnf("AMF status subscribe Failed[%+v]", problemDetails)
+		} else if err != nil {
+			logger.InitLog.Warnf("AMF status subscribe Error[%+v]", err)
+		}
 	}
 
 	signalChannel := make(chan os.Signal, 1)
@@ -162,8 +185,6 @@ func (etaf *ETAF) Start() {
 		etaf.Terminate()
 		os.Exit(0)
 	}()
-
-	server, err := http2_util.NewServer(addr, util.EtafLogPath, router)
 
 	if server == nil {
 		initLog.Errorf("Initialize HTTP server failed: %+v", err)
@@ -185,21 +206,6 @@ func (etaf *ETAF) Start() {
 		initLog.Fatalf("HTTP server setup failed: %+v", err)
 	}
 
-	// subscribe to all Amfs' status change
-	amfInfos := consumer.SearchAvailableAMFs(self.NrfUri, models.ServiceName_NAMF_COMM)
-	for _, amfInfo := range amfInfos {
-		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
-		if len(guamiList) == 0 {
-			continue
-		}
-		var problemDetails *models.ProblemDetails
-		problemDetails, err = consumer.AmfStatusChangeSubscribe(amfInfo)
-		if problemDetails != nil {
-			logger.InitLog.Warnf("AMF status subscribe Failed[%+v]", problemDetails)
-		} else if err != nil {
-			logger.InitLog.Warnf("AMF status subscribe Error[%+v]", err)
-		}
-	}
 }
 
 func (etaf *ETAF) Exec(c *cli.Context) error {
