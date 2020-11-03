@@ -155,6 +155,11 @@ type WEBUI struct {
 	ReportCaller bool   `yaml:"ReportCaller"`
 }
 
+type ETAF struct {
+	DebugLevel   string `yaml:"debugLevel"`
+	ReportCaller bool   `yaml:"ReportCaller"`
+}
+
 var self context
 
 // Unused code
