@@ -48,6 +48,10 @@ type Configuration struct {
 
 	T3512 int `yaml:"t3512,omitempty"`
 
+	MongoDBName string `yaml:"MongoDBName"`
+
+	MongoDBUrl string `yaml:"MongoDBUrl"`
+
 	Non3gppDeregistrationTimer int `yaml:"mon3gppDeregistrationTimer,omitempty"`
 }
 

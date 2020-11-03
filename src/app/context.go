@@ -41,9 +41,15 @@ type Logger struct {
 	AUSF               AUSF               `yaml:"AUSF"`
 	N3IWF              N3IWF              `yaml:"N3IWF"`
 	WEBUI              WEBUI              `yaml:"WEBUI"`
+	ETAF               ETAF               `yaml:"ETAF"`
 }
 
 type AMF struct {
+	DebugLevel   string `yaml:"debugLevel"`
+	ReportCaller bool   `yaml:"ReportCaller"`
+}
+
+type ETAF struct {
 	DebugLevel   string `yaml:"debugLevel"`
 	ReportCaller bool   `yaml:"ReportCaller"`
 }

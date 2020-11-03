@@ -13,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
+	"free5gc/lib/MongoDBLibrary"
 	"free5gc/lib/http2_util"
 	"free5gc/lib/logger_util"
 	"free5gc/lib/openapi/models"
@@ -108,6 +109,7 @@ func (etaf *ETAF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (etaf *ETAF) Start() {
+	MongoDBLibrary.SetMongoDB(factory.EtafConfig.Configuration.MongoDBName, factory.EtafConfig.Configuration.MongoDBUrl)
 	initLog.Infoln("Server started")
 
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
