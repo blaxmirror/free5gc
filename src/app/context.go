@@ -40,7 +40,6 @@ type Logger struct {
 	NSSF               NSSF               `yaml:"NSSF"`
 	AUSF               AUSF               `yaml:"AUSF"`
 	N3IWF              N3IWF              `yaml:"N3IWF"`
-	ETAF               ETAF               `yaml:"ETAF"`
 	WEBUI              WEBUI              `yaml:"WEBUI"`
 	ETAF               ETAF               `yaml:"ETAF"`
 }
